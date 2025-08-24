@@ -1,9 +1,8 @@
 name: Deploy Next.js to GitHub Pages
 
-# main 브랜치에 push 될 때마다 실행
 on:
   push:
-    branches: [main]
+    branches: [main] # main 브랜치에 push될 때 실행
 
 jobs:
   build-and-deploy:
@@ -22,13 +21,10 @@ jobs:
       # 3. Yarn 의존성 설치
       - run: yarn install
 
-      # 4. Next.js 정적 빌드
+      # 4. Next.js 정적 빌드 (out/ 폴더 생성)
       - run: yarn build
 
-      # 5. 정적 export (out/ 폴더 생성)
-      - run: yarn export
-
-      # 6. GitHub Pages용 아티팩트 업로드
+      # 5. GitHub Pages 아티팩트 업로드
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
