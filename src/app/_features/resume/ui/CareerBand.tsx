@@ -20,7 +20,7 @@ const CareerBand = ({
   return (
     <div
       className={cn(
-        "grid grid-cols-3 border-t border-b border-black text-2xl lg:text-4xl h-[120px] px-9 items-center mt-2 cursor-pointer hover:opacity-65 transition-colors duration-200 select-none",
+        "grid grid-cols-3 border-t border-b border-black text-xl lg:text-4xl h-[120px] px-9 items-center mt-2 cursor-pointer hover:opacity-65 transition-colors duration-200 select-none",
         className
       )}
       onClick={onClick}
@@ -29,7 +29,7 @@ const CareerBand = ({
         {company}
         {onClick && (
           <span
-            className={`text-2xl font-light transition-transform duration-300 ease-in-out ${
+            className={`text-lg lg:text-2xl font-light transition-transform duration-300 ease-in-out ${
               isExpanded ? "rotate-90" : "rotate-0"
             }`}
           >

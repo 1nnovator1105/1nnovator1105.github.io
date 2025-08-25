@@ -4,7 +4,7 @@ import { GithubIcon, TistoryIcon } from "../../shared/ui";
 const SayHello = () => {
   return (
     <div className="flex flex-col mt-4 w-full gap-4">
-      <div className="text-2xl font-regular">
+      <div className="text-xl lg:text-2xl font-regular">
         <div>안녕하세요 👋</div>
         <div>
           풀스택 개발자로 시작해서 현재는 프론트엔드 개발자로 경력을 이어 나가고
@@ -13,7 +13,7 @@ const SayHello = () => {
       </div>
 
       <div className="flex flex-row items-center justify-between">
-        <ul className="text-2xl font-light list-none">
+        <ul className="text-xl lg:text-2xl font-light list-none">
           <li>
             ✨ 제품을 이해하고, 기술이라는 도구를 활용하여 문제를 해결해요.
           </li>
@@ -21,7 +21,7 @@ const SayHello = () => {
           <li>✨ 더 나은 효율을 위해 고민하며 프로세스를 개선해 나가요.</li>
         </ul>
 
-        <div className="flex flex-row items-center gap-6">
+        <div className="flex-row items-center gap-6 lg:flex hidden">
           <Link
             href="https://github.com/1nnovator1105"
             target="_blank"

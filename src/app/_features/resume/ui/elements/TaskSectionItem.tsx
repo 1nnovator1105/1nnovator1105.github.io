@@ -17,7 +17,7 @@ const TaskSectionItem = ({ taskSectionItem }: TaskSectionItemProps) => {
           target="_blank"
           className="hover:underline"
         >
-          <div className="text-3xl font-regular break-words">
+          <div className="text-xl lg:text-3xl font-regular break-words">
             {taskSectionItem.title}
           </div>
         </Link>
@@ -25,7 +25,7 @@ const TaskSectionItem = ({ taskSectionItem }: TaskSectionItemProps) => {
     }
 
     return (
-      <div className="text-3xl font-regular break-words">
+      <div className="text-xl lg:text-3xl font-regular break-words">
         {taskSectionItem.title}
       </div>
     );
@@ -57,19 +57,19 @@ const TaskSectionItem = ({ taskSectionItem }: TaskSectionItemProps) => {
         <div className="flex flex-col">
           {renderTitle()}
           {taskSectionItem.techStacks && (
-            <div className="text-2xl font-light">
+            <div className="text-xl lg:text-2xl font-light">
               {taskSectionItem.techStacks.join(", ")}
             </div>
           )}
         </div>
         {taskSectionItem.period && (
-          <div className="text-xl font-light text-right">
+          <div className="text-xl lg:text-2xl font-light text-right">
             {taskSectionItem.period}
           </div>
         )}
       </div>
 
-      <ul className="text-3xl font-light list-disc pl-8 space-y-4">
+      <ul className="text-xl lg:text-3xl font-light list-disc pl-8 space-y-4">
         {taskSectionItem.descriptionList.map((description) => {
           if (typeof description === "string") {
             return (

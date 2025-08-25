@@ -8,8 +8,8 @@ interface TaskSectionProps {
 
 const TaskSection = ({ section, sectionItems }: TaskSectionProps) => {
   return (
-    <div className="grid grid-cols-[120px_1fr] lg:grid-cols-[240px_1fr] border-b-[1.5px] border-black">
-      <div className="text-3xl font-regular pt-9 pl-9 flex-col">
+    <div className="grid grid-cols-[80px_1fr] lg:grid-cols-[240px_1fr] border-b-[1.5px] border-black">
+      <div className="text-xl lg:text-3xl font-regular pt-9 pl-9 flex-col">
         <div>주요 업무</div>
         <div dangerouslySetInnerHTML={{ __html: section }} />
       </div>
