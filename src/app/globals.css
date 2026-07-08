@@ -5,10 +5,12 @@
    Warm paper / earth. Light is the default; dark overrides via data-theme.
    ========================================================================== */
 :root {
-  /* fonts */
-  --ff-body: "Pretendard", system-ui, -apple-system, sans-serif;
+  /* fonts — SUIT for Korean; JetBrains Mono for Latin meta labels, but Korean
+     glyphs inside mono labels fall back to SUIT so they don't break. */
+  --ff-body: "SUIT", "Apple SD Gothic Neo", system-ui, -apple-system, sans-serif;
   --ff-serif: "Newsreader", Georgia, serif;
-  --ff-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --ff-mono: "JetBrains Mono", "SUIT", "Apple SD Gothic Neo", ui-monospace,
+    monospace;
 
   /* light (default) */
   --bg: #f2ebdd;
@@ -107,6 +109,9 @@ a:hover {
    ========================================================================== */
 .pcard {
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.pcard:hover:not(.card-active) {
+  border-color: var(--line-strong);
 }
 .pcard.card-active {
   border-color: var(--accent) !important;
