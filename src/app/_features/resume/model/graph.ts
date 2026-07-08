@@ -1,10 +1,14 @@
 /**
  * Indra's Net graph model.
  *
- * The resume is expressed as an interconnected net of jewels: the person at the
- * center, companies + values on a primary ring, and skills fanning outward from
- * each company. Positions are computed deterministically (no randomness) so
- * server and client render identically (SSR-safe, no hydration mismatch).
+ * The resume is expressed as an interconnected net: the person at the center,
+ * companies + values on a primary ring, and skills fanning outward from each
+ * company. The layout is computed in the container's pixel space (elliptical
+ * ring so it fills both landscape and portrait), so it adapts to any screen —
+ * on mobile it becomes a tall constellation instead of a tiny centered blob.
+ *
+ * Positions are a pure function of (w, h) — deterministic, so SSR and the first
+ * client render (with default dims) agree; a ResizeObserver re-lays-out after.
  */
 
 export type NodeType = "self" | "company" | "skill" | "value";
@@ -15,12 +19,9 @@ export interface GraphNodeDef {
   label: string;
   sub?: string;
   detail?: string;
-  /** company id a skill belongs to (drives clustering) */
-  parent?: string;
-  /** resume section anchor for company nodes */
-  slug?: string;
-  /** primary-ring angle in degrees (companies + values) */
-  angle?: number;
+  parent?: string; // company id a skill belongs to
+  slug?: string; // resume section anchor for company nodes
+  angle?: number; // primary-ring angle in degrees (companies + values)
 }
 
 export interface GraphLink {
@@ -34,18 +35,16 @@ export interface PositionedNode extends GraphNodeDef {
   r: number;
 }
 
-export const VIEW = { w: 1000, h: 720 } as const;
-const CENTER = { x: 500, y: 360 };
-const R_PRIMARY = 152; // companies + values ring
-const R_SKILL = 130; // skills fan radius from their company
-const SKILL_SPREAD = 52; // degrees each side of the outward direction
+export interface Layout {
+  nodes: PositionedNode[];
+  links: GraphLink[];
+  minWH: number;
+}
 
-const RADIUS_BY_TYPE: Record<NodeType, number> = {
-  self: 13,
-  company: 10,
-  value: 8,
-  skill: 6,
-};
+export const DEFAULT_DIMS = { w: 1000, h: 640 } as const;
+
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.max(lo, Math.min(hi, v));
 
 /** Company nodes — `slug` matches the anchor id of each resume section. */
 const COMPANIES: GraphNodeDef[] = [
@@ -132,13 +131,9 @@ const SELF: GraphNodeDef = {
 };
 
 export const GRAPH_LINKS: GraphLink[] = [
-  // self ↔ companies
   ...COMPANIES.map((c) => ({ source: "self", target: c.id })),
-  // self ↔ values
   ...VALUES.map((v) => ({ source: "self", target: v.id })),
-  // company ↔ skills
   ...SKILLS.map((s) => ({ source: s.parent as string, target: s.id })),
-  // value ↔ related companies
   { source: "v-solve", target: "newneek" },
   { source: "v-solve", target: "side" },
   { source: "v-exp", target: "newneek" },
@@ -148,32 +143,43 @@ export const GRAPH_LINKS: GraphLink[] = [
 
 const deg2rad = (deg: number) => (deg * Math.PI) / 180;
 
-/** Compute positioned nodes deterministically from the definitions above. */
-export function computeGraph(): {
-  nodes: PositionedNode[];
-  links: GraphLink[];
-} {
+/** Compute positioned nodes in the container's pixel space (adapts to w × h). */
+export function computeGraph(w: number, h: number): Layout {
+  const cx = w / 2;
+  const cy = h / 2;
+  const minWH = Math.min(w, h);
+  const portrait = h > w * 1.05;
+
+  // elliptical primary ring fills both orientations
+  const Rx = w * (portrait ? 0.27 : 0.31);
+  const Ry = h * (portrait ? 0.3 : 0.31);
+  const skillR = minWH * (portrait ? 0.15 : 0.19);
+  const spread = portrait ? 36 : 50; // degrees each side of the outward dir
+
+  const R = {
+    self: clamp(minWH * 0.022, 9, 16),
+    company: clamp(minWH * 0.017, 7, 12),
+    value: clamp(minWH * 0.014, 6, 10),
+    skill: clamp(minWH * 0.0115, 4.5, 8.5),
+  };
+
+  const pad = 6;
+  const cX = (x: number, rr: number) => clamp(x, rr + pad, w - rr - pad);
+  const cY = (y: number, rr: number) => clamp(y, rr + pad, h - rr - pad);
+
   const positioned: PositionedNode[] = [];
 
-  positioned.push({
-    ...SELF,
-    x: CENTER.x,
-    y: CENTER.y,
-    r: RADIUS_BY_TYPE.self,
-  });
+  positioned.push({ ...SELF, x: cx, y: cy, r: R.self });
 
-  const primary = [...COMPANIES, ...VALUES];
-  const primaryPos: Record<string, { x: number; y: number; angle: number }> = {};
-
-  for (const node of primary) {
+  const primaryPos: Record<string, { x: number; y: number }> = {};
+  for (const node of [...COMPANIES, ...VALUES]) {
     const a = deg2rad(node.angle ?? 0);
-    const x = CENTER.x + R_PRIMARY * Math.cos(a);
-    const y = CENTER.y + R_PRIMARY * Math.sin(a);
-    primaryPos[node.id] = { x, y, angle: node.angle ?? 0 };
-    positioned.push({ ...node, x, y, r: RADIUS_BY_TYPE[node.type] });
+    const x = cX(cx + Rx * Math.cos(a), R[node.type]);
+    const y = cY(cy + Ry * Math.sin(a), R[node.type]);
+    primaryPos[node.id] = { x, y };
+    positioned.push({ ...node, x, y, r: R[node.type] });
   }
 
-  // group skills by company to fan them outward
   const byCompany: Record<string, GraphNodeDef[]> = {};
   for (const skill of SKILLS) {
     const p = skill.parent as string;
@@ -183,23 +189,28 @@ export function computeGraph(): {
   for (const [companyId, skills] of Object.entries(byCompany)) {
     const base = primaryPos[companyId];
     if (!base) continue;
+    // outward direction = away from the center (works with the ellipse)
+    const outward = Math.atan2(base.y - cy, base.x - cx);
     const k = skills.length;
     skills.forEach((skill, i) => {
-      const offset = k > 1 ? (i / (k - 1)) * 2 * SKILL_SPREAD - SKILL_SPREAD : 0;
-      const a = deg2rad(base.angle + offset);
-      const x = base.x + R_SKILL * Math.cos(a);
-      const y = base.y + R_SKILL * Math.sin(a);
-      positioned.push({ ...skill, x, y, r: RADIUS_BY_TYPE.skill });
+      const off = k > 1 ? (i / (k - 1)) * 2 * spread - spread : 0;
+      const a = outward + deg2rad(off);
+      const x = cX(base.x + skillR * Math.cos(a), R.skill);
+      const y = cY(base.y + skillR * Math.sin(a), R.skill);
+      positioned.push({ ...skill, x, y, r: R.skill });
     });
   }
 
-  return { nodes: positioned, links: GRAPH_LINKS };
+  return { nodes: positioned, links: GRAPH_LINKS, minWH };
 }
 
-/** Deterministic starfield (seeded LCG — identical on server + client). */
+/**
+ * Deterministic starfield in normalized [0,1] coords (seeded LCG). Normalized so
+ * the pattern stays stable when the container resizes — multiply by w/h to draw.
+ */
 export function makeStars(count: number): {
-  x: number;
-  y: number;
+  nx: number;
+  ny: number;
   r: number;
   dur: number;
   delay: number;
@@ -212,9 +223,9 @@ export function makeStars(count: number): {
   const stars = [];
   for (let i = 0; i < count; i++) {
     stars.push({
-      x: Math.round(rand() * VIEW.w),
-      y: Math.round(rand() * VIEW.h),
-      r: 0.6 + rand() * 1.4,
+      nx: rand(),
+      ny: rand(),
+      r: 0.6 + rand() * 1.3,
       dur: 3 + rand() * 4,
       delay: rand() * 4,
     });
