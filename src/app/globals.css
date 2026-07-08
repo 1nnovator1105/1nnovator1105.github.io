@@ -1,98 +1,77 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   Design tokens — dark ("cosmic jewel net") is the default; light overrides.
-   Theme is toggled by `data-theme` on <html> (set before paint in layout).
+   Design tokens — from Portfolio.dc.html (option 2a, "opt2" palette).
+   Warm paper / earth. Light is the default; dark overrides via data-theme.
    ========================================================================== */
 :root {
-  /* surfaces + text (dark default) */
-  --bg: #05060f;
-  --bg-elev: #0c0e1d;
-  --text: #ececf6;
-  --text-muted: #9a9cbd;
-  --line: rgba(255, 255, 255, 0.14);
-  --line-strong: rgba(255, 255, 255, 0.28);
-  --accent: #d9a86a;
+  /* fonts */
+  --ff-body: "Pretendard", system-ui, -apple-system, sans-serif;
+  --ff-serif: "Newsreader", Georgia, serif;
+  --ff-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  /* node hues (by type) — muted, soft "light caught in a net", not gemstones */
-  --c-self: #e6dcc2;
-  --c-company: #cfa872;
-  --c-skill: #8fabc0;
-  --c-value: #ac9fc4;
-
-  /* graph atmosphere */
-  --hero-bg: radial-gradient(
-      1200px 700px at 50% -10%,
-      rgba(92, 200, 255, 0.1),
-      transparent 60%
-    ),
-    radial-gradient(
-      900px 600px at 85% 110%,
-      rgba(193, 155, 255, 0.1),
-      transparent 60%
-    ),
-    linear-gradient(180deg, #05060f 0%, #070912 60%, #05060f 100%);
-  --link: rgba(255, 255, 255, 0.16);
-  --link-active: var(--accent);
-  --star: rgba(255, 255, 255, 0.55);
-  --glow-r: 2.5px;
-  --node-stroke: rgba(255, 255, 255, 0.32);
-  --panel-bg: rgba(12, 14, 29, 0.92);
-  --panel-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.8);
+  /* light (default) */
+  --bg: #f2ebdd;
+  --bg2: #e9e0cf;
+  --text: #241c14;
+  --muted: #7a6b58;
+  --line: rgba(36, 28, 20, 0.13);
+  --line-strong: rgba(36, 28, 20, 0.26);
+  --accent: #bc5a34;
+  --jewel-self: #7a3f22;
+  --jewel-skill: #9b8468;
+  --jewel-value: #c88a47;
 }
 
-:root[data-theme="light"] {
-  --bg: #ffffff;
-  --bg-elev: #ffffff;
-  --text: #171717;
-  --text-muted: #5b6472;
-  --line: rgba(23, 23, 23, 0.85);
-  --line-strong: #171717;
-  --accent: #c05f27;
-
-  --c-self: #8a6d3b;
-  --c-company: #a96a35;
-  --c-skill: #4d6f88;
-  --c-value: #6d5f96;
-
-  --hero-bg: radial-gradient(
-      900px 500px at 50% -20%,
-      rgba(234, 88, 12, 0.06),
-      transparent 60%
-    ),
-    linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
-  --link: rgba(23, 23, 23, 0.18);
-  --link-active: var(--accent);
-  --star: rgba(23, 23, 23, 0.16);
-  --glow-r: 0px;
-  --node-stroke: rgba(23, 23, 23, 0.22);
-  --panel-bg: rgba(255, 255, 255, 0.96);
-  --panel-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.25);
+:root[data-theme="dark"] {
+  --bg: #181310;
+  --bg2: #211a15;
+  --text: #eee4d6;
+  --muted: #a38f79;
+  --line: rgba(238, 228, 214, 0.14);
+  --line-strong: rgba(238, 228, 214, 0.3);
+  --accent: #e07c4c;
+  --jewel-self: #c98b5e;
+  --jewel-skill: #b7a488;
+  --jewel-value: #e0a85f;
 }
 
-/* Expose tokens as Tailwind color utilities (theme-aware because inline). */
 @theme inline {
   --color-page: var(--bg);
-  --color-surface: var(--bg-elev);
+  --color-surface: var(--bg2);
   --color-body: var(--text);
-  --color-muted: var(--text-muted);
+  --color-muted: var(--muted);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
-  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-geist-mono);
-  --font-nbg: "NanumBarunGothic", system-ui, -apple-system, sans-serif;
+  --color-jewel-self: var(--jewel-self);
+  --color-jewel-skill: var(--jewel-skill);
+  --color-jewel-value: var(--jewel-value);
+  --font-sans: var(--ff-body);
+  --font-serif: var(--ff-serif);
+  --font-mono: var(--ff-mono);
 }
 
 html {
-  font-size: 67% !important;
   scroll-behavior: smooth;
 }
 
 body {
+  margin: 0;
   background: var(--bg);
   color: var(--text);
-  transition: background-color 0.45s ease, color 0.45s ease;
+  font-family: var(--ff-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
 }
 
 .custom-list-circle {
@@ -100,273 +79,110 @@ body {
 }
 
 /* ==========================================================================
-   Indra's Net graph
+   Chrome — theme chip
    ========================================================================== */
-.indra-hero {
-  position: relative;
-  width: 100%;
-  background: var(--hero-bg);
-  transition: background 0.45s ease;
-  overflow: hidden;
-  border-radius: 24px;
-}
-
-.indra-svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  touch-action: manipulation;
-}
-
-/* links */
-.indra-link {
-  stroke: var(--link);
-  stroke-width: 1;
-  transition: stroke 0.35s ease, stroke-width 0.35s ease, opacity 0.35s ease;
-}
-.indra-svg[data-active="true"] .indra-link {
-  opacity: 0.18;
-}
-.indra-link.is-active {
-  stroke: var(--link-active);
-  stroke-width: 1.8;
-  opacity: 1 !important;
-}
-
-/* nodes */
-.indra-node {
-  cursor: pointer;
-  transition: opacity 0.35s ease;
-}
-.indra-svg[data-active="true"] .indra-node {
-  opacity: 0.32;
-}
-.indra-node.is-active {
-  opacity: 1 !important;
-}
-.indra-node:focus {
-  outline: none;
-}
-.indra-node:focus-visible .knot {
-  stroke: var(--accent);
-  stroke-width: 2;
-}
-.indra-node .knot {
-  fill: var(--jewel, var(--c-skill));
-  fill-opacity: 0.9;
-  stroke: var(--node-stroke);
-  stroke-width: 0.6;
-  filter: drop-shadow(0 0 var(--glow-r) var(--jewel, var(--c-skill)));
-  transition: filter 0.35s ease, fill-opacity 0.35s ease;
-}
-.indra-node.is-active .knot {
-  fill-opacity: 1;
-  filter: drop-shadow(0 0 calc(var(--glow-r) * 1.8 + 1px) var(--jewel, var(--c-skill)));
-}
-.indra-node .halo {
-  fill: var(--jewel, var(--c-skill));
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-.indra-node.is-active .halo {
-  opacity: 0.1;
-}
-.indra-node .label {
-  fill: var(--text);
-  font-family: var(--font-nbg);
-  paint-order: stroke;
-  stroke: var(--bg);
-  stroke-width: 3px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-.indra-node.is-self .label,
-.indra-node.is-company .label {
-  opacity: 0.9;
-}
-.indra-node.is-active .label {
-  opacity: 1;
-}
-.indra-svg.show-all-labels .indra-node .label {
-  opacity: 0.92;
-}
-
-/* twinkling background stars */
-.indra-star {
-  fill: var(--star);
-  animation: twinkle var(--tw-dur, 4s) ease-in-out infinite;
-  animation-delay: var(--tw-delay, 0s);
-}
-@keyframes twinkle {
-  0%,
-  100% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 0.9;
-  }
-}
-
-/* self node slow pulse ring */
-.indra-node .pulse {
-  fill: none;
-  stroke: var(--jewel, var(--c-self));
-  stroke-width: 0.75;
-  opacity: 0.3;
-  transform-origin: center;
-  transform-box: fill-box;
-  animation: pulse-ring 4.4s ease-out infinite;
-}
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.32;
-  }
-  70%,
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-/* detail panel */
-.node-panel {
-  position: absolute;
-  left: 50%;
-  bottom: 20px;
-  transform: translateX(-50%) translateY(12px);
-  width: min(560px, calc(100% - 32px));
-  background: var(--panel-bg);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: var(--panel-shadow);
-  padding: 20px 22px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 5;
-}
-.node-panel.open {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-  pointer-events: auto;
-}
-
-/* theme toggle + hero chrome */
-.hero-chip {
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg-elev) 70%, transparent);
-  backdrop-filter: blur(8px);
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
   color: var(--text);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-family: var(--ff-mono);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+.chip:hover {
+  background: var(--bg2);
+}
+.chip:active {
+  transform: scale(0.96);
 }
 
 /* ==========================================================================
-   Entrance + scroll-reveal motion (from prior iteration, theme-aware)
+   Résumé cards
+   ========================================================================== */
+.pcard {
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.pcard.card-active {
+  border-color: var(--accent) !important;
+  box-shadow: 0 12px 36px -16px rgba(0, 0, 0, 0.3), 0 0 0 1.5px var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Net graph
+   ========================================================================== */
+.pnet {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+.pnet-link {
+  transition: opacity 0.35s, stroke 0.35s, stroke-width 0.35s;
+}
+.pnet-node {
+  transition: opacity 0.35s;
+}
+.pnet-node:focus {
+  outline: none;
+}
+.pnet-node:focus-visible .pnet-dot {
+  stroke: var(--accent);
+  stroke-width: 2.4;
+}
+
+@keyframes net-pulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.4;
+  }
+  70%,
+  100% {
+    transform: scale(2.3);
+    opacity: 0;
+  }
+}
+.net-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: net-pulse 4.6s ease-out infinite;
+}
+
+/* custom scrollbar for the cards panel */
+.cards-scroll::-webkit-scrollbar {
+  width: 9px;
+}
+.cards-scroll::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+}
+.cards-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ==========================================================================
+   Entrance motion (subtle, on load)
    ========================================================================== */
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes expand-line {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
 .anim-fade-up {
   opacity: 0;
-  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--d, 0ms);
-}
-.anim-fade-in {
-  opacity: 0;
-  animation: fade-in 0.9s ease forwards;
-  animation-delay: var(--d, 0ms);
-}
-.anim-line {
-  transform: scaleX(0);
-  transform-origin: left;
-  animation: expand-line 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: var(--d, 400ms);
-}
-
-.reveal {
-  opacity: 1;
-}
-html.js .reveal {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-  transition-delay: var(--reveal-delay, 0ms);
-  will-change: opacity, transform;
-}
-html.js .reveal.is-visible {
-  opacity: 1;
-  transform: none;
-}
-html.reveal-all .reveal {
-  opacity: 1 !important;
-  transform: none !important;
-  transition: none !important;
-}
-
-.scroll-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 3px;
-  width: 100%;
-  transform: scaleX(var(--progress, 0));
-  transform-origin: left;
-  background: linear-gradient(90deg, var(--c-skill), var(--accent), var(--c-value));
-  z-index: 60;
-  will-change: transform;
-}
-
-/* animated sheen on the name (theme-aware via currentColor mix) */
-@keyframes sheen {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-.name-sheen {
-  background: linear-gradient(
-    100deg,
-    var(--text) 0%,
-    var(--text) 40%,
-    var(--accent) 50%,
-    var(--text) 60%,
-    var(--text) 100%
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: sheen 6s linear infinite;
-  animation-delay: 1.2s;
 }
 
 /* ==========================================================================
@@ -376,28 +192,13 @@ html.reveal-all .reveal {
   html {
     scroll-behavior: auto;
   }
-  html.js .reveal {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+  .net-pulse {
+    animation: none !important;
   }
-  .anim-fade-up,
-  .anim-fade-in,
-  .anim-line,
-  .name-sheen {
+  .anim-fade-up {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
-    background: none;
-    color: inherit;
-    -webkit-text-fill-color: currentColor;
-  }
-  .indra-star,
-  .indra-node .pulse {
-    animation: none !important;
-  }
-  .scroll-progress {
-    display: none;
   }
   *,
   *::before,
@@ -409,23 +210,20 @@ html.reveal-all .reveal {
 }
 
 @media print {
-  .indra-hero,
-  .scroll-progress,
-  .theme-toggle,
-  .node-panel {
-    display: none !important;
-  }
-  .reveal,
-  .anim-fade-up,
-  .anim-fade-in,
-  .anim-line {
-    opacity: 1 !important;
-    transform: none !important;
-    animation: none !important;
-  }
   :root {
     --bg: #ffffff;
-    --text: #171717;
-    --line: #171717;
+    --bg2: #ffffff;
+    --text: #1a1611;
+    --line: rgba(0, 0, 0, 0.2);
+    --line-strong: rgba(0, 0, 0, 0.4);
+  }
+  .pnet-graph,
+  .theme-chip,
+  .net-legend {
+    display: none !important;
+  }
+  .cards-scroll {
+    overflow: visible !important;
+    height: auto !important;
   }
 }

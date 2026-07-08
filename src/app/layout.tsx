@@ -1,16 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "김민성 | Frontend Engineer Resume",
@@ -34,7 +23,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "김민성 | Frontend Engineer Resume",
     description:
-      "프론트엔드 개발자로서의 프로젝트 경험, 기술 역량, 협업 성과를 소개합니다.",
+      "프론트엔드 개발자로서의 프로젝트 경험, 기술 역량, 협업 성과를 노드-링크 그래프로 소개합니다.",
     url: "https://github.com/1nnovator1105",
     siteName: "김민성 Resume",
     images: [
@@ -71,26 +60,29 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <head>
-        {/* Before first paint: set the persisted theme (default dark = the
-            cosmic jewel net), mark JS active so scroll-reveal hidden states
-            apply without a flash, and arm a fallback timer that force-reveals
-            everything if hydration never runs (content is never stuck hidden). */}
+        {/* Apply the persisted theme before first paint (default light = the
+            warm paper look). `?theme=light|dark` overrides for shareable links. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var q=(location.search.match(/[?&]theme=(dark|light)/)||[])[1];var t=q||localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}document.documentElement.classList.add('js');window.__revealFallback=setTimeout(function(){document.documentElement.classList.add('reveal-all')},2500);})();`,
+            __html: `(function(){try{var q=(location.search.match(/[?&]theme=(dark|light)/)||[])[1];var t=q||localStorage.getItem('theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`,
           }}
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
         />
         <link
           rel="stylesheet"
-          type="text/css"
-          href="https://cdn.jsdelivr.net/gh/moonspam/NanumBarunGothic@latest/nanumbarungothicsubset.css"
-        ></link>
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet"
+        />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} font-nbg antialiased`}
-      >
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
