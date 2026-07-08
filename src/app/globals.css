@@ -12,13 +12,13 @@
   --text-muted: #9a9cbd;
   --line: rgba(255, 255, 255, 0.14);
   --line-strong: rgba(255, 255, 255, 0.28);
-  --accent: #ffb454;
+  --accent: #d9a86a;
 
-  /* jewel node hues (by node type) */
-  --c-self: #ffe7a3;
-  --c-company: #ffb454;
-  --c-skill: #5cc8ff;
-  --c-value: #c19bff;
+  /* node hues (by type) — muted, soft "light caught in a net", not gemstones */
+  --c-self: #e6dcc2;
+  --c-company: #cfa872;
+  --c-skill: #8fabc0;
+  --c-value: #ac9fc4;
 
   /* graph atmosphere */
   --hero-bg: radial-gradient(
@@ -32,11 +32,11 @@
       transparent 60%
     ),
     linear-gradient(180deg, #05060f 0%, #070912 60%, #05060f 100%);
-  --link: rgba(255, 255, 255, 0.14);
+  --link: rgba(255, 255, 255, 0.16);
   --link-active: var(--accent);
-  --star: rgba(255, 255, 255, 0.75);
-  --glow-r: 7px;
-  --node-stroke: rgba(255, 255, 255, 0.55);
+  --star: rgba(255, 255, 255, 0.55);
+  --glow-r: 2.5px;
+  --node-stroke: rgba(255, 255, 255, 0.32);
   --panel-bg: rgba(12, 14, 29, 0.92);
   --panel-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.8);
 }
@@ -48,12 +48,12 @@
   --text-muted: #5b6472;
   --line: rgba(23, 23, 23, 0.85);
   --line-strong: #171717;
-  --accent: #ea580c;
+  --accent: #c05f27;
 
-  --c-self: #b45309;
-  --c-company: #ea580c;
-  --c-skill: #0369a1;
-  --c-value: #6d28d9;
+  --c-self: #8a6d3b;
+  --c-company: #a96a35;
+  --c-skill: #4d6f88;
+  --c-value: #6d5f96;
 
   --hero-bg: radial-gradient(
       900px 500px at 50% -20%,
@@ -63,9 +63,9 @@
     linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
   --link: rgba(23, 23, 23, 0.18);
   --link-active: var(--accent);
-  --star: rgba(23, 23, 23, 0.18);
-  --glow-r: 1.5px;
-  --node-stroke: rgba(23, 23, 23, 0.25);
+  --star: rgba(23, 23, 23, 0.16);
+  --glow-r: 0px;
+  --node-stroke: rgba(23, 23, 23, 0.22);
   --panel-bg: rgba(255, 255, 255, 0.96);
   --panel-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.25);
 }
@@ -144,20 +144,24 @@ body {
 .indra-node.is-active {
   opacity: 1 !important;
 }
-.indra-node .jewel {
+.indra-node:focus {
+  outline: none;
+}
+.indra-node:focus-visible .knot {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.indra-node .knot {
   fill: var(--jewel, var(--c-skill));
+  fill-opacity: 0.9;
   stroke: var(--node-stroke);
-  stroke-width: 0.75;
+  stroke-width: 0.6;
   filter: drop-shadow(0 0 var(--glow-r) var(--jewel, var(--c-skill)));
-  transition: filter 0.35s ease;
+  transition: filter 0.35s ease, fill-opacity 0.35s ease;
 }
-.indra-node .jewel-spec {
-  fill: #ffffff;
-  opacity: 0.7;
-  pointer-events: none;
-}
-.indra-node.is-active .jewel {
-  filter: drop-shadow(0 0 calc(var(--glow-r) * 2.4) var(--jewel, var(--c-skill)));
+.indra-node.is-active .knot {
+  fill-opacity: 1;
+  filter: drop-shadow(0 0 calc(var(--glow-r) * 1.8 + 1px) var(--jewel, var(--c-skill)));
 }
 .indra-node .halo {
   fill: var(--jewel, var(--c-skill));
@@ -165,7 +169,7 @@ body {
   transition: opacity 0.35s ease;
 }
 .indra-node.is-active .halo {
-  opacity: 0.14;
+  opacity: 0.1;
 }
 .indra-node .label {
   fill: var(--text);
@@ -208,20 +212,20 @@ body {
 .indra-node .pulse {
   fill: none;
   stroke: var(--jewel, var(--c-self));
-  stroke-width: 1;
-  opacity: 0.5;
+  stroke-width: 0.75;
+  opacity: 0.3;
   transform-origin: center;
   transform-box: fill-box;
-  animation: pulse-ring 3.6s ease-out infinite;
+  animation: pulse-ring 4.4s ease-out infinite;
 }
 @keyframes pulse-ring {
   0% {
     transform: scale(0.9);
-    opacity: 0.55;
+    opacity: 0.32;
   }
   70%,
   100% {
-    transform: scale(2.2);
+    transform: scale(2);
     opacity: 0;
   }
 }

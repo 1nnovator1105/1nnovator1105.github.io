@@ -76,8 +76,8 @@ const Hero = () => {
           ))}
         </div>
 
-        {/* scroll cue */}
-        <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 text-base font-light text-muted opacity-70">
+        {/* scroll cue (hidden on mobile to avoid the legend) */}
+        <div className="pointer-events-none absolute bottom-3 left-1/2 hidden -translate-x-1/2 text-base font-light text-muted opacity-70 sm:block">
           ↓ 스크롤하여 이력서 보기
         </div>
       </div>

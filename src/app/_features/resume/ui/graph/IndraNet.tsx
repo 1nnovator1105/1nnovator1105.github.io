@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   computeGraph,
+  DEFAULT_DIMS,
   makeStars,
-  VIEW,
   type NodeType,
   type PositionedNode,
 } from "../../model/graph";
@@ -30,11 +30,35 @@ const AMP_BY_TYPE: Record<NodeType, number> = {
   skill: 5,
 };
 
-const labelSize = (t: NodeType) =>
-  t === "self" ? 21 : t === "company" ? 17 : 14;
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.max(lo, Math.min(hi, v));
 
 const IndraNet = () => {
-  const { nodes, links } = useMemo(() => computeGraph(), []);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [dims, setDims] = useState<{ w: number; h: number }>({
+    w: DEFAULT_DIMS.w,
+    h: DEFAULT_DIMS.h,
+  });
+
+  // Measure the container so the graph lays out in real pixel space (adapts to
+  // mobile portrait vs desktop landscape).
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver((entries) => {
+      const cr = entries[0].contentRect;
+      const w = Math.round(cr.width);
+      const h = Math.round(cr.height);
+      if (w > 0 && h > 0) setDims({ w, h });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const { nodes, links, minWH } = useMemo(
+    () => computeGraph(dims.w, dims.h),
+    [dims.w, dims.h]
+  );
   const stars = useMemo(() => makeStars(46), []);
   const nodeById = useMemo(() => {
     const m: Record<string, PositionedNode> = {};
@@ -42,17 +66,26 @@ const IndraNet = () => {
     return m;
   }, [nodes]);
 
+  const ampScale = clamp(minWH / 700, 0.5, 1.15);
+  const labelSize = (t: NodeType) =>
+    t === "self"
+      ? clamp(minWH * 0.03, 12, 22)
+      : t === "company"
+      ? clamp(minWH * 0.024, 11, 17)
+      : clamp(minWH * 0.02, 9.5, 13);
+
   const drift = useMemo(() => {
     const m: Record<string, { amp: number; speed: number; phase: number }> = {};
     nodes.forEach((n, i) => {
       m[n.id] = {
-        amp: AMP_BY_TYPE[n.type],
+        amp: AMP_BY_TYPE[n.type] * ampScale,
         speed: 0.22 + (i % 5) * 0.045,
         phase: i * 0.7,
       };
     });
     return m;
-  }, [nodes]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes, ampScale]);
 
   const nodeEls = useRef(new Map<string, SVGGElement>());
   const linkEls = useRef(new Map<number, SVGLineElement>());
@@ -71,8 +104,8 @@ const IndraNet = () => {
     return set;
   }, [focusId, links]);
 
-  // Gentle drift — nodes bob; links follow their endpoints. Updates the DOM
-  // directly (refs) so hover re-renders don't fight per-frame geometry.
+  // Gentle drift — nodes bob; links follow. Updates the DOM directly (refs) so
+  // hover re-renders don't fight per-frame geometry.
   useEffect(() => {
     const reduce = window.matchMedia?.(
       "(prefers-reduced-motion: reduce)"
@@ -112,7 +145,6 @@ const IndraNet = () => {
     return () => cancelAnimationFrame(raf);
   }, [nodes, links, drift]);
 
-  // Escape closes the detail panel
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSelectedId(null);
@@ -125,18 +157,20 @@ const IndraNet = () => {
 
   const scrollToSection = (slug?: string) => {
     if (!slug) return;
-    document.getElementById(slug)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    document
+      .getElementById(slug)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
     setSelectedId(null);
   };
 
   return (
-    <div className="indra-hero h-[74vh] min-h-[500px] max-h-[820px]">
+    <div
+      ref={containerRef}
+      className="indra-hero h-[60vh] min-h-[420px] max-h-[560px] sm:h-[74vh] sm:min-h-[500px] sm:max-h-[820px]"
+    >
       <svg
         className="indra-svg"
-        viewBox={`0 0 ${VIEW.w} ${VIEW.h}`}
+        viewBox={`0 0 ${dims.w} ${dims.h}`}
         preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label="김민성의 경력·기술·가치를 노드-링크로 표현한 인드라망 그래프"
@@ -146,17 +180,21 @@ const IndraNet = () => {
         }}
       >
         {/* background stars */}
-        <g
-          onClick={() => setSelectedId(null)}
-          style={{ cursor: "default" }}
-        >
-          <rect x={0} y={0} width={VIEW.w} height={VIEW.h} fill="transparent" />
+        <g>
+          <rect
+            x={0}
+            y={0}
+            width={dims.w}
+            height={dims.h}
+            fill="transparent"
+            onClick={() => setSelectedId(null)}
+          />
           {stars.map((s, i) => (
             <circle
               key={`star-${i}`}
               className="indra-star"
-              cx={s.x}
-              cy={s.y}
+              cx={s.nx * dims.w}
+              cy={s.ny * dims.h}
               r={s.r}
               style={
                 {
@@ -168,7 +206,7 @@ const IndraNet = () => {
           ))}
         </g>
 
-        {/* links */}
+        {/* links (the net) */}
         <g>
           {links.map((l, i) => {
             const s = nodeById[l.source];
@@ -194,7 +232,7 @@ const IndraNet = () => {
           })}
         </g>
 
-        {/* nodes */}
+        {/* nodes (the knots) */}
         <g>
           {nodes.map((n) => {
             const isActive = connected ? connected.has(n.id) : false;
@@ -205,6 +243,7 @@ const IndraNet = () => {
             ]
               .filter(Boolean)
               .join(" ");
+            const hitR = Math.max(n.r * 2.4, 18);
             return (
               <g
                 key={n.id}
@@ -233,17 +272,13 @@ const IndraNet = () => {
                   }
                 }}
               >
+                {/* enlarged invisible tap target (mobile-friendly) */}
+                <circle r={hitR} fill="none" style={{ pointerEvents: "all" }} />
                 {n.type === "self" && (
                   <circle className="pulse" cx={0} cy={0} r={n.r + 4} />
                 )}
                 <circle className="halo" cx={0} cy={0} r={n.r * 2.6} />
-                <circle className="jewel" cx={0} cy={0} r={n.r} />
-                <circle
-                  className="jewel-spec"
-                  cx={-n.r * 0.32}
-                  cy={-n.r * 0.32}
-                  r={Math.max(1, n.r * 0.28)}
-                />
+                <circle className="knot" cx={0} cy={0} r={n.r} />
                 <text
                   className="label"
                   x={0}
@@ -272,10 +307,9 @@ const IndraNet = () => {
               <span
                 className="inline-block rounded-full"
                 style={{
-                  width: 12,
-                  height: 12,
+                  width: 11,
+                  height: 11,
                   background: TYPE_VAR[selected.type],
-                  boxShadow: `0 0 10px ${TYPE_VAR[selected.type]}`,
                 }}
               />
               <span className="text-lg font-light text-muted">
