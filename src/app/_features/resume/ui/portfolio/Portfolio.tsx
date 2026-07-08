@@ -168,8 +168,8 @@ const Portfolio = () => {
   active.add("self");
 
   return (
-    <div className="book-desk min-h-screen lg:flex lg:h-screen lg:items-center lg:justify-center lg:p-12">
-      <div className="book relative flex w-full flex-col lg:h-full lg:max-w-[1440px] lg:flex-row lg:overflow-hidden lg:rounded-[16px] lg:border lg:border-line-strong">
+    <div className="book-desk min-h-screen lg:flex lg:h-screen lg:items-center lg:justify-center lg:p-6 xl:p-7">
+      <div className="book relative flex w-full flex-col lg:h-full lg:max-w-[1660px] lg:flex-row lg:overflow-hidden lg:rounded-[16px]">
         {/* LEFT page — header + graph + legend */}
         <div className="book-page-left flex flex-col bg-page lg:w-[42%] lg:h-full lg:border-r lg:border-line-strong">
         <div className="px-6 pt-10 lg:px-10 lg:pt-16">

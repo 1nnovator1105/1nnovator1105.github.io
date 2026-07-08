@@ -23,13 +23,16 @@
   --jewel-self: #c8501e;
   --jewel-skill: #a98a58;
   --jewel-value: #e59539;
-  --desk: #d7ccb2;
-  --desk-edge: #b6a888;
-  --page-edge: rgba(80, 52, 30, 0.2);
-  --gutter: rgba(60, 40, 24, 0.3);
-  --gutter-dark: rgba(40, 26, 14, 0.46);
-  --gutter-soft: rgba(60, 40, 24, 0.1);
-  --ridge: rgba(255, 250, 240, 0.55);
+  --desk: #d5c9ad;
+  --desk-edge: #a99b73;
+  --page-face: #f6f0e3;
+  --page-edge: rgba(70, 46, 26, 0.26);
+  --book-border: rgba(36, 28, 20, 0.34);
+  --book-glow: rgba(0, 0, 0, 0);
+  --gutter: rgba(55, 36, 20, 0.34);
+  --gutter-dark: rgba(38, 24, 12, 0.52);
+  --gutter-soft: rgba(55, 36, 20, 0.1);
+  --ridge: rgba(255, 253, 247, 0.75);
 }
 
 :root[data-theme="dark"] {
@@ -43,13 +46,16 @@
   --jewel-self: #e88a54;
   --jewel-skill: #c4a774;
   --jewel-value: #f2b060;
-  --desk: #0f0c0a;
-  --desk-edge: #030201;
-  --page-edge: rgba(0, 0, 0, 0.55);
-  --gutter: rgba(0, 0, 0, 0.62);
-  --gutter-dark: rgba(0, 0, 0, 0.82);
-  --gutter-soft: rgba(0, 0, 0, 0.24);
-  --ridge: rgba(255, 240, 220, 0.09);
+  --desk: #080605;
+  --desk-edge: #000000;
+  --page-face: #2f251b;
+  --page-edge: rgba(0, 0, 0, 0.6);
+  --book-border: rgba(255, 238, 216, 0.32);
+  --book-glow: rgba(255, 176, 112, 0.06);
+  --gutter: rgba(0, 0, 0, 0.72);
+  --gutter-dark: rgba(0, 0, 0, 0.92);
+  --gutter-soft: rgba(0, 0, 0, 0.3);
+  --ridge: rgba(255, 240, 220, 0.18);
 }
 
 @theme inline {
@@ -145,23 +151,31 @@ a:hover {
   /* desk: soft spotlight so the book reads as sitting on a surface */
   .book-desk {
     background: radial-gradient(
-      140% 105% at 50% 18%,
+      135% 100% at 50% 16%,
       var(--desk),
       var(--desk-edge)
     );
   }
-  /* the book cover: stacked page edges on left/right/bottom (thickness) + lift */
+  /* the book cover: a light-catching rim border, stacked page edges (thickness)
+     on left/right/bottom, a warm ambient glow, and a deep lift shadow. The page
+     edges use --page-face (lighter than the desk) so thickness reads even on a
+     dark desk where drop-shadows can't. */
   .book {
+    border: 1px solid var(--book-border);
     box-shadow:
-      -3px 0 0 var(--bg), -4px 0 0 var(--page-edge),
-      -6px 0 0 var(--bg), -7px 0 0 var(--page-edge),
-      3px 0 0 var(--bg), 4px 0 0 var(--page-edge),
-      6px 0 0 var(--bg), 7px 0 0 var(--page-edge),
-      0 4px 0 var(--bg), 0 5px 0 var(--page-edge),
-      0 7px 0 var(--bg), 0 8px 0 var(--page-edge),
-      0 10px 0 var(--bg), 0 11px 0 var(--page-edge),
-      0 52px 90px -28px rgba(0, 0, 0, 0.55),
-      0 22px 48px -22px rgba(0, 0, 0, 0.42);
+      -3px 0 0 var(--page-face), -4px 0 0 var(--page-edge),
+      -6px 0 0 var(--page-face), -7px 0 0 var(--page-edge),
+      -9px 0 0 var(--page-face), -10px 0 0 var(--page-edge),
+      3px 0 0 var(--page-face), 4px 0 0 var(--page-edge),
+      6px 0 0 var(--page-face), 7px 0 0 var(--page-edge),
+      9px 0 0 var(--page-face), 10px 0 0 var(--page-edge),
+      0 4px 0 var(--page-face), 0 5px 0 var(--page-edge),
+      0 7px 0 var(--page-face), 0 8px 0 var(--page-edge),
+      0 10px 0 var(--page-face), 0 11px 0 var(--page-edge),
+      0 13px 0 var(--page-face), 0 14px 0 var(--page-edge),
+      0 0 100px 8px var(--book-glow),
+      0 62px 100px -24px rgba(0, 0, 0, 0.62),
+      0 26px 54px -20px rgba(0, 0, 0, 0.48);
   }
   /* pages dip into the spine valley */
   .book-page-left {
