@@ -15,12 +15,14 @@ const LEGEND: { label: string; color: string }[] = [
 
 const Portfolio = () => {
   const [hoverId, setHoverId] = useState<string | null>(null);
+  const [hoverCardIds, setHoverCardIds] = useState<string[] | null>(null);
   const [activeIds, setActiveIds] = useState<string[]>(["self"]);
   const [theme, setTheme] = useState<Theme>("light");
 
   const panelRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<HTMLDivElement | null>(null);
   const activeKeyRef = useRef("");
+  const hoverCardKeyRef = useRef<string | null>(null);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -129,9 +131,37 @@ const Portfolio = () => {
     }
   }, []);
 
+  // Hovering a card previews its connections in the graph (like scrolling to
+  // it, but without moving). Delegated on the cards container.
+  const onCardsOver = (e: React.MouseEvent) => {
+    const card = (e.target as HTMLElement).closest<HTMLElement>("[data-card]");
+    if (!card) return;
+    const node = card.getAttribute("data-node") || "";
+    const skills = (card.getAttribute("data-skills") || "")
+      .split(" ")
+      .filter(Boolean);
+    const set = [node, ...skills].filter(Boolean);
+    const key = set.join(",");
+    if (key !== hoverCardKeyRef.current) {
+      hoverCardKeyRef.current = key;
+      setHoverCardIds(set);
+    }
+  };
+  const onCardsLeave = () => {
+    hoverCardKeyRef.current = null;
+    setHoverCardIds(null);
+  };
+
+  // priority: node hover > card hover > scrolled-to card
   const active = hoverId
     ? neighbors(hoverId)
-    : new Set(activeIds.length ? activeIds : ["self"]);
+    : new Set(
+        hoverCardIds && hoverCardIds.length
+          ? hoverCardIds
+          : activeIds.length
+          ? activeIds
+          : ["self"]
+      );
 
   return (
     <div className="lg:flex lg:h-screen">
@@ -196,6 +226,8 @@ const Portfolio = () => {
       >
         <div
           ref={cardsRef}
+          onMouseOver={onCardsOver}
+          onMouseLeave={onCardsLeave}
           className="px-5 pb-[240px] pt-9 sm:px-8 lg:px-11 lg:pb-[440px] lg:pt-11"
         >
           <PortfolioCards />
