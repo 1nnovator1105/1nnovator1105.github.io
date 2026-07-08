@@ -52,7 +52,7 @@ const TaskSectionItem = ({ taskSectionItem }: TaskSectionItemProps) => {
   };
 
   return (
-    <div className="group flex flex-col gap-6 px-9 border-l-2 border-transparent transition-all duration-300 hover:border-orange-500 hover:bg-black/[0.015] hover:translate-x-1">
+    <div className="group flex flex-col gap-6 px-9 border-l-2 border-transparent transition-all duration-300 hover:border-accent hover:translate-x-1">
       <div className="flex flex-row items-start justify-between gap-6">
         <div className="flex flex-col">
           {renderTitle()}

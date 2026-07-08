@@ -1,32 +1,98 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   Design tokens — dark ("cosmic jewel net") is the default; light overrides.
+   Theme is toggled by `data-theme` on <html> (set before paint in layout).
+   ========================================================================== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* surfaces + text (dark default) */
+  --bg: #05060f;
+  --bg-elev: #0c0e1d;
+  --text: #ececf6;
+  --text-muted: #9a9cbd;
+  --line: rgba(255, 255, 255, 0.14);
+  --line-strong: rgba(255, 255, 255, 0.28);
+  --accent: #ffb454;
+
+  /* jewel node hues (by node type) */
+  --c-self: #ffe7a3;
+  --c-company: #ffb454;
+  --c-skill: #5cc8ff;
+  --c-value: #c19bff;
+
+  /* graph atmosphere */
+  --hero-bg: radial-gradient(
+      1200px 700px at 50% -10%,
+      rgba(92, 200, 255, 0.1),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 600px at 85% 110%,
+      rgba(193, 155, 255, 0.1),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #05060f 0%, #070912 60%, #05060f 100%);
+  --link: rgba(255, 255, 255, 0.14);
+  --link-active: var(--accent);
+  --star: rgba(255, 255, 255, 0.75);
+  --glow-r: 7px;
+  --node-stroke: rgba(255, 255, 255, 0.55);
+  --panel-bg: rgba(12, 14, 29, 0.92);
+  --panel-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.8);
 }
 
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-elev: #ffffff;
+  --text: #171717;
+  --text-muted: #5b6472;
+  --line: rgba(23, 23, 23, 0.85);
+  --line-strong: #171717;
+  --accent: #ea580c;
+
+  --c-self: #b45309;
+  --c-company: #ea580c;
+  --c-skill: #0369a1;
+  --c-value: #6d28d9;
+
+  --hero-bg: radial-gradient(
+      900px 500px at 50% -20%,
+      rgba(234, 88, 12, 0.06),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
+  --link: rgba(23, 23, 23, 0.18);
+  --link-active: var(--accent);
+  --star: rgba(23, 23, 23, 0.18);
+  --glow-r: 1.5px;
+  --node-stroke: rgba(23, 23, 23, 0.25);
+  --panel-bg: rgba(255, 255, 255, 0.96);
+  --panel-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.25);
+}
+
+/* Expose tokens as Tailwind color utilities (theme-aware because inline). */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-page: var(--bg);
+  --color-surface: var(--bg-elev);
+  --color-body: var(--text);
+  --color-muted: var(--text-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-nbg: "NanumBarunGothic", system-ui, -apple-system, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 html {
   font-size: 67% !important;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 0.45s ease, color 0.45s ease;
 }
 
 .custom-list-circle {
@@ -34,14 +100,167 @@ body {
 }
 
 /* ==========================================================================
-   Motion system
-   - On-load entrance animations run via pure CSS (work without JS).
-   - Scroll reveals hide only when JS is active (html.js) so no-JS / print
-     always show content.
-   - prefers-reduced-motion disables everything and forces content visible.
+   Indra's Net graph
    ========================================================================== */
+.indra-hero {
+  position: relative;
+  width: 100%;
+  background: var(--hero-bg);
+  transition: background 0.45s ease;
+  overflow: hidden;
+  border-radius: 24px;
+}
 
-/* --- On-load entrance ---------------------------------------------------- */
+.indra-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: manipulation;
+}
+
+/* links */
+.indra-link {
+  stroke: var(--link);
+  stroke-width: 1;
+  transition: stroke 0.35s ease, stroke-width 0.35s ease, opacity 0.35s ease;
+}
+.indra-svg[data-active="true"] .indra-link {
+  opacity: 0.18;
+}
+.indra-link.is-active {
+  stroke: var(--link-active);
+  stroke-width: 1.8;
+  opacity: 1 !important;
+}
+
+/* nodes */
+.indra-node {
+  cursor: pointer;
+  transition: opacity 0.35s ease;
+}
+.indra-svg[data-active="true"] .indra-node {
+  opacity: 0.32;
+}
+.indra-node.is-active {
+  opacity: 1 !important;
+}
+.indra-node .jewel {
+  fill: var(--jewel, var(--c-skill));
+  stroke: var(--node-stroke);
+  stroke-width: 0.75;
+  filter: drop-shadow(0 0 var(--glow-r) var(--jewel, var(--c-skill)));
+  transition: filter 0.35s ease;
+}
+.indra-node .jewel-spec {
+  fill: #ffffff;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.indra-node.is-active .jewel {
+  filter: drop-shadow(0 0 calc(var(--glow-r) * 2.4) var(--jewel, var(--c-skill)));
+}
+.indra-node .halo {
+  fill: var(--jewel, var(--c-skill));
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.indra-node.is-active .halo {
+  opacity: 0.14;
+}
+.indra-node .label {
+  fill: var(--text);
+  font-family: var(--font-nbg);
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 3px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.indra-node.is-self .label,
+.indra-node.is-company .label {
+  opacity: 0.9;
+}
+.indra-node.is-active .label {
+  opacity: 1;
+}
+.indra-svg.show-all-labels .indra-node .label {
+  opacity: 0.92;
+}
+
+/* twinkling background stars */
+.indra-star {
+  fill: var(--star);
+  animation: twinkle var(--tw-dur, 4s) ease-in-out infinite;
+  animation-delay: var(--tw-delay, 0s);
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* self node slow pulse ring */
+.indra-node .pulse {
+  fill: none;
+  stroke: var(--jewel, var(--c-self));
+  stroke-width: 1;
+  opacity: 0.5;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: pulse-ring 3.6s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* detail panel */
+.node-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%) translateY(12px);
+  width: min(560px, calc(100% - 32px));
+  background: var(--panel-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--panel-shadow);
+  padding: 20px 22px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 5;
+}
+.node-panel.open {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* theme toggle + hero chrome */
+.hero-chip {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg-elev) 70%, transparent);
+  backdrop-filter: blur(8px);
+  color: var(--text);
+}
+
+/* ==========================================================================
+   Entrance + scroll-reveal motion (from prior iteration, theme-aware)
+   ========================================================================== */
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -52,7 +271,6 @@ body {
     transform: none;
   }
 }
-
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -61,7 +279,6 @@ body {
     opacity: 1;
   }
 }
-
 @keyframes expand-line {
   from {
     transform: scaleX(0);
@@ -71,34 +288,16 @@ body {
   }
 }
 
-@keyframes float-slow {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes ring-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .anim-fade-up {
   opacity: 0;
   animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: var(--d, 0ms);
 }
-
 .anim-fade-in {
   opacity: 0;
   animation: fade-in 0.9s ease forwards;
   animation-delay: var(--d, 0ms);
 }
-
 .anim-line {
   transform: scaleX(0);
   transform-origin: left;
@@ -106,16 +305,9 @@ body {
   animation-delay: var(--d, 400ms);
 }
 
-.anim-float {
-  animation: float-slow 6s ease-in-out infinite;
-  animation-delay: 1s;
-}
-
-/* --- Scroll reveal (JS-driven) ------------------------------------------- */
 .reveal {
   opacity: 1;
 }
-
 html.js .reveal {
   opacity: 0;
   transform: translateY(32px);
@@ -124,21 +316,16 @@ html.js .reveal {
   transition-delay: var(--reveal-delay, 0ms);
   will-change: opacity, transform;
 }
-
 html.js .reveal.is-visible {
   opacity: 1;
   transform: none;
 }
-
-/* Safety net: if hydration never happens (JS bundle fails), the inline
-   fallback timer adds `reveal-all` so content is never stuck hidden. */
 html.reveal-all .reveal {
   opacity: 1 !important;
   transform: none !important;
   transition: none !important;
 }
 
-/* --- Top scroll-progress bar --------------------------------------------- */
 .scroll-progress {
   position: fixed;
   top: 0;
@@ -147,12 +334,12 @@ html.reveal-all .reveal {
   width: 100%;
   transform: scaleX(var(--progress, 0));
   transform-origin: left;
-  background: linear-gradient(90deg, #f97316, #171717);
-  z-index: 50;
+  background: linear-gradient(90deg, var(--c-skill), var(--accent), var(--c-value));
+  z-index: 60;
   will-change: transform;
 }
 
-/* --- Animated gradient sweep for the name -------------------------------- */
+/* animated sheen on the name (theme-aware via currentColor mix) */
 @keyframes sheen {
   0% {
     background-position: 200% 0;
@@ -161,15 +348,14 @@ html.reveal-all .reveal {
     background-position: -200% 0;
   }
 }
-
 .name-sheen {
   background: linear-gradient(
     100deg,
-    #171717 0%,
-    #171717 40%,
-    #f97316 50%,
-    #171717 60%,
-    #171717 100%
+    var(--text) 0%,
+    var(--text) 40%,
+    var(--accent) 50%,
+    var(--text) 60%,
+    var(--text) 100%
   );
   background-size: 200% 100%;
   -webkit-background-clip: text;
@@ -179,8 +365,13 @@ html.reveal-all .reveal {
   animation-delay: 1.2s;
 }
 
-/* --- Reduced motion + safety --------------------------------------------- */
+/* ==========================================================================
+   Reduced motion + print
+   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   html.js .reveal {
     opacity: 1 !important;
     transform: none !important;
@@ -197,7 +388,8 @@ html.reveal-all .reveal {
     color: inherit;
     -webkit-text-fill-color: currentColor;
   }
-  .anim-float {
+  .indra-star,
+  .indra-node .pulse {
     animation: none !important;
   }
   .scroll-progress {
@@ -209,11 +401,16 @@ html.reveal-all .reveal {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
 @media print {
+  .indra-hero,
+  .scroll-progress,
+  .theme-toggle,
+  .node-panel {
+    display: none !important;
+  }
   .reveal,
   .anim-fade-up,
   .anim-fade-in,
@@ -222,7 +419,9 @@ html.reveal-all .reveal {
     transform: none !important;
     animation: none !important;
   }
-  .scroll-progress {
-    display: none;
+  :root {
+    --bg: #ffffff;
+    --text: #171717;
+    --line: #171717;
   }
 }

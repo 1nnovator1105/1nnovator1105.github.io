@@ -20,19 +20,27 @@ const CareerBand = ({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden grid grid-cols-3 border-t border-b border-black text-xl lg:text-4xl h-[120px] px-9 items-center mt-2 cursor-pointer select-none transition-all duration-300 hover:opacity-95 hover:shadow-md",
+        "group relative overflow-hidden grid grid-cols-3 border-t border-b border-line text-xl lg:text-4xl h-[120px] px-9 items-center mt-2 cursor-pointer select-none transition-all duration-300 hover:bg-surface hover:shadow-md",
         className
       )}
       onClick={onClick}
     >
-      {/* Left accent bar grows on hover */}
-      <span className="pointer-events-none absolute left-0 top-0 h-full w-[6px] origin-top scale-y-0 bg-black transition-transform duration-300 ease-out group-hover:scale-y-100" />
+      {/* Left accent bar grows on hover — echoes the company's jewel color */}
+      <span className="pointer-events-none absolute left-0 top-0 h-full w-[6px] origin-top scale-y-0 bg-[var(--c-company)] transition-transform duration-300 ease-out group-hover:scale-y-100" />
 
-      <div className="font-regular text-left flex items-center gap-3 transition-transform duration-300 group-hover:translate-x-2">
+      <div className="font-regular text-left flex items-center gap-3 transition-transform duration-300 group-hover:translate-x-2 text-body">
+        {/* jewel dot */}
+        <span
+          className="inline-block size-3 shrink-0 rounded-full"
+          style={{
+            background: "var(--c-company)",
+            boxShadow: "0 0 8px var(--c-company)",
+          }}
+        />
         {company}
         {onClick && (
           <span
-            className={`text-lg lg:text-2xl font-light transition-transform duration-300 ease-in-out group-hover:scale-125 ${
+            className={`text-lg lg:text-2xl font-light text-muted transition-transform duration-300 ease-in-out group-hover:scale-125 ${
               isExpanded ? "rotate-90" : "rotate-0"
             }`}
           >
@@ -40,8 +48,8 @@ const CareerBand = ({
           </span>
         )}
       </div>
-      <div className="font-light text-center">{position}</div>
-      <div className="font-light text-right">{period}</div>
+      <div className="font-light text-center text-muted">{position}</div>
+      <div className="font-light text-right text-muted">{period}</div>
     </div>
   );
 };

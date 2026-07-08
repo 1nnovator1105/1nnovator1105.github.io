@@ -6,7 +6,7 @@ interface TechStackItemProps {
 const TechStackItem = ({ title, description }: TechStackItemProps) => {
   return (
     <div className="group flex flex-col transition-transform duration-200 hover:translate-x-1">
-      <div className="text-xl lg:text-2xl font-regular transition-colors duration-200 group-hover:text-orange-600">
+      <div className="text-xl lg:text-2xl font-regular text-body transition-colors duration-200 group-hover:text-accent">
         {title}
       </div>
       <ul className="text-xl lg:text-2xl font-light list-disc pl-8 mt-2">

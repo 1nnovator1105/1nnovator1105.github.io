@@ -69,15 +69,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko" suppressHydrationWarning>
       <head>
-        {/* Mark JS as active before first paint so scroll-reveal hidden states
-            apply without a flash. No-JS / print keep content visible. The
-            fallback timer force-reveals everything if hydration never runs, so
-            content is never permanently hidden. */}
+        {/* Before first paint: set the persisted theme (default dark = the
+            cosmic jewel net), mark JS active so scroll-reveal hidden states
+            apply without a flash, and arm a fallback timer that force-reveals
+            everything if hydration never runs (content is never stuck hidden). */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('js');window.__revealFallback=setTimeout(function(){document.documentElement.classList.add('reveal-all')},2500);`,
+            __html: `(function(){try{var q=(location.search.match(/[?&]theme=(dark|light)/)||[])[1];var t=q||localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}document.documentElement.classList.add('js');window.__revealFallback=setTimeout(function(){document.documentElement.classList.add('reveal-all')},2500);})();`,
           }}
         />
         <link
