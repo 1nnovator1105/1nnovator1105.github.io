@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Reveal } from "../../shared/ui";
 import { CareerBand } from "./CareerBand";
 import { Task } from "./Task";
 import { TechStacks } from "./TechStacks";
@@ -19,18 +20,22 @@ const Company = ({ name, careerBandClassName }: CompanyProps) => {
 
   return (
     <>
-      <CareerBand
-        company={name}
-        className={careerBandClassName}
-        onClick={handleToggle}
-        isExpanded={isExpanded}
-      />
+      <Reveal>
+        <CareerBand
+          company={name}
+          className={careerBandClassName}
+          onClick={handleToggle}
+          isExpanded={isExpanded}
+        />
+      </Reveal>
       <div
-        className={`overflow-hidden transition-all duration-500 ease-in-out ${
-          isExpanded ? "max-h-[10000px] opacity-100" : "max-h-0 opacity-0"
+        className={`grid transition-all duration-500 ease-in-out ${
+          isExpanded
+            ? "grid-rows-[1fr] opacity-100"
+            : "grid-rows-[0fr] opacity-0"
         }`}
       >
-        <div className="transform transition-transform duration-500 ease-in-out">
+        <div className="overflow-hidden">
           <TechStacks company={name} />
           <Task company={name} />
         </div>

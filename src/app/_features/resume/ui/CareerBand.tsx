@@ -20,16 +20,19 @@ const CareerBand = ({
   return (
     <div
       className={cn(
-        "grid grid-cols-3 border-t border-b border-black text-xl lg:text-4xl h-[120px] px-9 items-center mt-2 cursor-pointer hover:opacity-65 transition-colors duration-200 select-none",
+        "group relative overflow-hidden grid grid-cols-3 border-t border-b border-black text-xl lg:text-4xl h-[120px] px-9 items-center mt-2 cursor-pointer select-none transition-all duration-300 hover:opacity-95 hover:shadow-md",
         className
       )}
       onClick={onClick}
     >
-      <div className="font-regular text-left flex items-center gap-3">
+      {/* Left accent bar grows on hover */}
+      <span className="pointer-events-none absolute left-0 top-0 h-full w-[6px] origin-top scale-y-0 bg-black transition-transform duration-300 ease-out group-hover:scale-y-100" />
+
+      <div className="font-regular text-left flex items-center gap-3 transition-transform duration-300 group-hover:translate-x-2">
         {company}
         {onClick && (
           <span
-            className={`text-lg lg:text-2xl font-light transition-transform duration-300 ease-in-out ${
+            className={`text-lg lg:text-2xl font-light transition-transform duration-300 ease-in-out group-hover:scale-125 ${
               isExpanded ? "rotate-90" : "rotate-0"
             }`}
           >

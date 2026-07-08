@@ -71,6 +71,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Mark JS as active before first paint so scroll-reveal hidden states
+            apply without a flash. No-JS / print keep content visible. The
+            fallback timer force-reveals everything if hydration never runs, so
+            content is never permanently hidden. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('js');window.__revealFallback=setTimeout(function(){document.documentElement.classList.add('reveal-all')},2500);`,
+          }}
+        />
         <link
           rel="stylesheet"
           type="text/css"
