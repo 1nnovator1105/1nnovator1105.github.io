@@ -29,6 +29,9 @@ export const NODES: GNode[] = [
   { id: "ol", label: "OpenLayers", type: "skill", x: 720, y: 215 },
   { id: "gis", label: "PostGIS", type: "skill", x: 690, y: 290 },
   { id: "java", label: "Java", type: "skill", x: 555, y: 65 },
+  { id: "django", label: "Django", type: "skill", x: 62, y: 280 },
+  { id: "firebase", label: "Firebase", type: "skill", x: 48, y: 150 },
+  { id: "aws", label: "AWS", type: "skill", x: 210, y: 400 },
   { id: "v1", label: "문제해결", type: "value", x: 430, y: 375 },
   { id: "v2", label: "실행력", type: "value", x: 300, y: 390 },
   { id: "v3", label: "효율", type: "value", x: 540, y: 388 },
@@ -46,6 +49,9 @@ export const LINKS: [string, string][] = [
   ["newneek", "react"],
   ["newneek", "lang"],
   ["newneek", "ts"],
+  ["newneek", "django"],
+  ["newneek", "firebase"],
+  ["newneek", "aws"],
   ["ui", "spring"],
   ["ui", "ol"],
   ["ui", "gis"],
@@ -67,6 +73,10 @@ export const SKILL_MAP: [string, string][] = [
   ["OpenLayers", "ol"],
   ["PostGIS", "gis"],
   ["Java", "java"],
+  ["Django", "django"],
+  ["Firebase", "firebase"],
+  ["AWS", "aws"],
+  ["S3", "aws"],
 ];
 
 export const COMPANY_ID: Record<string, string> = {
@@ -86,12 +96,35 @@ const NODE_BY_ID: Record<string, GNode> = Object.fromEntries(
 );
 export const getNode = (id: string): GNode | undefined => NODE_BY_ID[id];
 
-/** Skill ids matched from a task item's tech-stack labels. */
+/**
+ * Does a tech-stack string contain this skill label as a distinct token?
+ * Partial so "Django Framework"/"SpringBoot"/"WebView(Next.js 기반)"/"AWS Lambda"
+ * match, but the char right after the label must not be a lowercase letter, so
+ * "Java" does NOT match "Javascript".
+ */
+const labelMatches = (stack: string, label: string): boolean => {
+  const i = stack.indexOf(label);
+  if (i === -1) return false;
+  const after = stack[i + label.length];
+  return after === undefined || !/[a-z]/.test(after);
+};
+
+/** Skill ids matched from a task item's tech-stack labels (longest label wins). */
 export function matchSkills(stacks?: string[]): string[] {
   if (!stacks) return [];
-  return SKILL_MAP.filter(([label]) => stacks.includes(label)).map(
-    ([, id]) => id
-  );
+  const ids = new Set<string>();
+  for (const stack of stacks) {
+    let best: string | null = null;
+    let bestLen = -1;
+    for (const [label, id] of SKILL_MAP) {
+      if (label.length > bestLen && labelMatches(stack, label)) {
+        best = id;
+        bestLen = label.length;
+      }
+    }
+    if (best) ids.add(best);
+  }
+  return [...ids];
 }
 
 /** A node plus its directly connected nodes. */
