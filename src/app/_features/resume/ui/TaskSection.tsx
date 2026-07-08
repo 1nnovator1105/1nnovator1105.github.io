@@ -1,3 +1,4 @@
+import { Reveal } from "../../shared/ui";
 import { TaskSectionItemType } from "../model/types";
 import { TaskSectionItem } from "./elements";
 
@@ -14,11 +15,13 @@ const TaskSection = ({ section, sectionItems }: TaskSectionProps) => {
         <div dangerouslySetInnerHTML={{ __html: section }} />
       </div>
       <div className="flex flex-col py-9 gap-9">
-        {sectionItems.map((item) => (
-          <TaskSectionItem
+        {sectionItems.map((item, index) => (
+          <Reveal
             key={`${section}-${item.title}`}
-            taskSectionItem={item}
-          />
+            delay={Math.min(index * 80, 400)}
+          >
+            <TaskSectionItem taskSectionItem={item} />
+          </Reveal>
         ))}
       </div>
     </div>
