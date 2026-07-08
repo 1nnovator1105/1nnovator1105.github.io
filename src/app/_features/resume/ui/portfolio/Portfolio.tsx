@@ -153,7 +153,7 @@ const Portfolio = () => {
   };
 
   // priority: node hover > card hover > scrolled-to card
-  const active = hoverId
+  const base = hoverId
     ? neighbors(hoverId)
     : new Set(
         hoverCardIds && hoverCardIds.length
@@ -162,11 +162,15 @@ const Portfolio = () => {
           ? activeIds
           : ["self"]
       );
+  // the 김민성(self)↔회사 backbone always stays connected/lit
+  const active = new Set(base);
+  ["self", "newneek", "ui", "side"].forEach((id) => active.add(id));
 
   return (
-    <div className="lg:flex lg:h-screen">
-      {/* LEFT — header + graph + legend */}
-      <div className="flex flex-col bg-page lg:w-[42%] lg:h-screen lg:border-r lg:border-line">
+    <div className="book-desk min-h-screen lg:flex lg:h-screen lg:items-center lg:justify-center lg:overflow-hidden lg:bg-desk lg:p-8 xl:p-10">
+      <div className="book relative flex w-full flex-col lg:h-full lg:max-w-[1480px] lg:flex-row lg:overflow-hidden lg:rounded-[20px] lg:border lg:border-line-strong">
+        {/* LEFT page — header + graph + legend */}
+        <div className="book-page-left flex flex-col bg-page lg:w-[42%] lg:h-full lg:border-r lg:border-line-strong">
         <div className="px-6 pt-10 lg:px-10 lg:pt-16">
           <div className="flex items-start justify-between gap-4">
             <div className="anim-fade-up">
@@ -219,18 +223,19 @@ const Portfolio = () => {
         </div>
       </div>
 
-      {/* RIGHT — scrolling résumé cards */}
-      <div
-        ref={panelRef}
-        className="cards-scroll w-full bg-surface lg:w-[58%] lg:h-screen lg:overflow-y-auto"
-      >
+        {/* RIGHT page — scrolling résumé cards */}
         <div
-          ref={cardsRef}
-          onMouseOver={onCardsOver}
-          onMouseLeave={onCardsLeave}
-          className="px-5 pb-[240px] pt-9 sm:px-8 lg:px-11 lg:pb-[440px] lg:pt-11"
+          ref={panelRef}
+          className="book-page-right cards-scroll w-full bg-surface lg:w-[58%] lg:h-full lg:overflow-y-auto"
         >
-          <PortfolioCards />
+          <div
+            ref={cardsRef}
+            onMouseOver={onCardsOver}
+            onMouseLeave={onCardsLeave}
+            className="px-5 pb-[240px] pt-9 sm:px-8 lg:px-11 lg:pb-[440px] lg:pt-11"
+          >
+            <PortfolioCards />
+          </div>
         </div>
       </div>
     </div>

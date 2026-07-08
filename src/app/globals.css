@@ -19,10 +19,12 @@
   --muted: #7a6b58;
   --line: rgba(36, 28, 20, 0.13);
   --line-strong: rgba(36, 28, 20, 0.26);
-  --accent: #bc5a34;
-  --jewel-self: #7a3f22;
-  --jewel-skill: #9b8468;
-  --jewel-value: #c88a47;
+  --accent: #ee5a24;
+  --jewel-self: #c8501e;
+  --jewel-skill: #a98a58;
+  --jewel-value: #e59539;
+  --desk: #ddd4c2;
+  --gutter: rgba(70, 45, 25, 0.16);
 }
 
 :root[data-theme="dark"] {
@@ -32,10 +34,12 @@
   --muted: #a38f79;
   --line: rgba(238, 228, 214, 0.14);
   --line-strong: rgba(238, 228, 214, 0.3);
-  --accent: #e07c4c;
-  --jewel-self: #c98b5e;
-  --jewel-skill: #b7a488;
-  --jewel-value: #e0a85f;
+  --accent: #ff7d42;
+  --jewel-self: #e88a54;
+  --jewel-skill: #c4a774;
+  --jewel-value: #f2b060;
+  --desk: #0e0b09;
+  --gutter: rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
@@ -46,6 +50,7 @@
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-accent: var(--accent);
+  --color-desk: var(--desk);
   --color-jewel-self: var(--jewel-self);
   --color-jewel-skill: var(--jewel-skill);
   --color-jewel-value: var(--jewel-value);
@@ -121,6 +126,22 @@ a:hover {
   border-color: var(--accent) !important;
   box-shadow: 0 12px 36px -16px rgba(0, 0, 0, 0.3), 0 0 0 1.5px var(--accent);
   transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Book frame (desktop) — outer cover shadow + center gutter (spine)
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .book {
+    box-shadow: 0 40px 90px -34px rgba(0, 0, 0, 0.5),
+      0 12px 30px -16px rgba(0, 0, 0, 0.32);
+  }
+  .book-page-left {
+    box-shadow: inset -16px 0 30px -22px var(--gutter);
+  }
+  .book-page-right {
+    box-shadow: inset 16px 0 30px -22px var(--gutter);
+  }
 }
 
 /* ==========================================================================
@@ -234,5 +255,17 @@ a:hover {
   .cards-scroll {
     overflow: visible !important;
     height: auto !important;
+  }
+  .book-desk {
+    padding: 0 !important;
+    background: #fff !important;
+    height: auto !important;
+  }
+  .book {
+    max-width: none !important;
+    height: auto !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 }
