@@ -162,13 +162,14 @@ const Portfolio = () => {
           ? activeIds
           : ["self"]
       );
-  // the 김민성(self)↔회사 backbone always stays connected/lit
+  // keep 김민성(self) in focus so the self↔(focused company) link lights up —
+  // but NOT all companies at once. Viewing 뉴닉 → 김민성↔뉴닉, etc.
   const active = new Set(base);
-  ["self", "newneek", "ui", "side"].forEach((id) => active.add(id));
+  active.add("self");
 
   return (
-    <div className="book-desk min-h-screen lg:flex lg:h-screen lg:items-center lg:justify-center lg:overflow-hidden lg:bg-desk lg:p-8 xl:p-10">
-      <div className="book relative flex w-full flex-col lg:h-full lg:max-w-[1480px] lg:flex-row lg:overflow-hidden lg:rounded-[20px] lg:border lg:border-line-strong">
+    <div className="book-desk min-h-screen lg:flex lg:h-screen lg:items-center lg:justify-center lg:p-12">
+      <div className="book relative flex w-full flex-col lg:h-full lg:max-w-[1440px] lg:flex-row lg:overflow-hidden lg:rounded-[16px] lg:border lg:border-line-strong">
         {/* LEFT page — header + graph + legend */}
         <div className="book-page-left flex flex-col bg-page lg:w-[42%] lg:h-full lg:border-r lg:border-line-strong">
         <div className="px-6 pt-10 lg:px-10 lg:pt-16">
@@ -237,6 +238,9 @@ const Portfolio = () => {
             <PortfolioCards />
           </div>
         </div>
+
+        {/* center spine / gutter (desktop) */}
+        <div className="book-spine hidden lg:block" aria-hidden="true" />
       </div>
     </div>
   );

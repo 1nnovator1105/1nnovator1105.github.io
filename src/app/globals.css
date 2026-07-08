@@ -23,8 +23,13 @@
   --jewel-self: #c8501e;
   --jewel-skill: #a98a58;
   --jewel-value: #e59539;
-  --desk: #ddd4c2;
-  --gutter: rgba(70, 45, 25, 0.16);
+  --desk: #d7ccb2;
+  --desk-edge: #b6a888;
+  --page-edge: rgba(80, 52, 30, 0.2);
+  --gutter: rgba(60, 40, 24, 0.3);
+  --gutter-dark: rgba(40, 26, 14, 0.46);
+  --gutter-soft: rgba(60, 40, 24, 0.1);
+  --ridge: rgba(255, 250, 240, 0.55);
 }
 
 :root[data-theme="dark"] {
@@ -38,8 +43,13 @@
   --jewel-self: #e88a54;
   --jewel-skill: #c4a774;
   --jewel-value: #f2b060;
-  --desk: #0e0b09;
-  --gutter: rgba(0, 0, 0, 0.5);
+  --desk: #0f0c0a;
+  --desk-edge: #030201;
+  --page-edge: rgba(0, 0, 0, 0.55);
+  --gutter: rgba(0, 0, 0, 0.62);
+  --gutter-dark: rgba(0, 0, 0, 0.82);
+  --gutter-soft: rgba(0, 0, 0, 0.24);
+  --ridge: rgba(255, 240, 220, 0.09);
 }
 
 @theme inline {
@@ -132,15 +142,69 @@ a:hover {
    Book frame (desktop) — outer cover shadow + center gutter (spine)
    ========================================================================== */
 @media (min-width: 1024px) {
-  .book {
-    box-shadow: 0 40px 90px -34px rgba(0, 0, 0, 0.5),
-      0 12px 30px -16px rgba(0, 0, 0, 0.32);
+  /* desk: soft spotlight so the book reads as sitting on a surface */
+  .book-desk {
+    background: radial-gradient(
+      140% 105% at 50% 18%,
+      var(--desk),
+      var(--desk-edge)
+    );
   }
+  /* the book cover: stacked page edges on left/right/bottom (thickness) + lift */
+  .book {
+    box-shadow:
+      -3px 0 0 var(--bg), -4px 0 0 var(--page-edge),
+      -6px 0 0 var(--bg), -7px 0 0 var(--page-edge),
+      3px 0 0 var(--bg), 4px 0 0 var(--page-edge),
+      6px 0 0 var(--bg), 7px 0 0 var(--page-edge),
+      0 4px 0 var(--bg), 0 5px 0 var(--page-edge),
+      0 7px 0 var(--bg), 0 8px 0 var(--page-edge),
+      0 10px 0 var(--bg), 0 11px 0 var(--page-edge),
+      0 52px 90px -28px rgba(0, 0, 0, 0.55),
+      0 22px 48px -22px rgba(0, 0, 0, 0.42);
+  }
+  /* pages dip into the spine valley */
   .book-page-left {
-    box-shadow: inset -16px 0 30px -22px var(--gutter);
+    box-shadow: inset -50px 0 48px -36px var(--gutter);
   }
   .book-page-right {
-    box-shadow: inset 16px 0 30px -22px var(--gutter);
+    box-shadow: inset 50px 0 48px -36px var(--gutter);
+  }
+  /* center spine: dark valley + two page-curl highlight ridges */
+  .book-spine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 42%;
+    width: 150px;
+    margin-left: -75px;
+    z-index: 6;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent 3%,
+      var(--gutter-soft) 26%,
+      var(--gutter) 45%,
+      var(--gutter-dark) 50%,
+      var(--gutter) 55%,
+      var(--gutter-soft) 74%,
+      transparent 97%
+    );
+  }
+  .book-spine::before,
+  .book-spine::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1.5px;
+    background: var(--ridge);
+  }
+  .book-spine::before {
+    left: 40%;
+  }
+  .book-spine::after {
+    right: 40%;
   }
 }
 
