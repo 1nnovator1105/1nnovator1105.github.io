@@ -161,7 +161,6 @@ a:hover {
      edges use --page-face (lighter than the desk) so thickness reads even on a
      dark desk where drop-shadows can't. */
   .book {
-    perspective: 2600px;
     border: 1px solid var(--book-border);
     box-shadow:
       -3px 0 0 var(--page-face), -4px 0 0 var(--page-edge),
@@ -220,37 +219,6 @@ a:hover {
   }
   .book-spine::after {
     right: 40%;
-  }
-
-  /* opening: the two pages unfold from the center spine on load */
-  /* the left page is the open base; the right page starts folded over onto it
-     (closed to one side) and flips open to the right like a book cover */
-  .book-open .book-page-right {
-    transform-origin: left center;
-    backface-visibility: hidden;
-    animation: cover-flip 1.6s cubic-bezier(0.65, 0, 0.35, 1) both;
-  }
-  /* spine appears once the cover has opened */
-  .book-open .book-spine {
-    opacity: 0;
-    animation: spine-in 0.5s ease 1.3s both;
-  }
-}
-
-@keyframes cover-flip {
-  from {
-    transform: rotateY(180deg);
-  }
-  to {
-    transform: rotateY(0deg);
-  }
-}
-@keyframes spine-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 
@@ -334,13 +302,6 @@ a:hover {
   }
   .net-pulse {
     animation: none !important;
-  }
-  .book-open .book-page-left,
-  .book-open .book-page-right,
-  .book-open .book-spine {
-    animation: none !important;
-    transform: none !important;
-    opacity: 1 !important;
   }
   .anim-fade-up {
     opacity: 1 !important;
