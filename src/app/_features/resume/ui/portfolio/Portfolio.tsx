@@ -18,6 +18,7 @@ const Portfolio = () => {
   const [hoverCardIds, setHoverCardIds] = useState<string[] | null>(null);
   const [activeIds, setActiveIds] = useState<string[]>(["self"]);
   const [theme, setTheme] = useState<Theme>("light");
+  const [opening, setOpening] = useState(true);
 
   const panelRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<HTMLDivElement | null>(null);
@@ -29,6 +30,9 @@ const Portfolio = () => {
     setTheme(
       (document.documentElement.getAttribute("data-theme") as Theme) || "light"
     );
+    // let the book-open animation play, then drop the transform
+    const t = setTimeout(() => setOpening(false), 1500);
+    return () => clearTimeout(t);
   }, []);
 
   const toggleTheme = () => {
@@ -169,7 +173,11 @@ const Portfolio = () => {
 
   return (
     <div className="book-desk min-h-screen lg:flex lg:h-screen lg:items-center lg:justify-center lg:p-6 xl:p-7">
-      <div className="book relative flex w-full flex-col lg:h-full lg:max-w-[1660px] lg:flex-row lg:overflow-hidden lg:rounded-[16px]">
+      <div
+        className={`book relative flex w-full flex-col lg:h-full lg:max-w-[1660px] lg:flex-row lg:overflow-hidden lg:rounded-[16px] ${
+          opening ? "book-open" : ""
+        }`}
+      >
         {/* LEFT page — header + graph + legend */}
         <div className="book-page-left flex flex-col bg-page lg:w-1/2 lg:h-full lg:border-r lg:border-line-strong">
         <div className="px-6 pt-10 lg:px-10 lg:pt-16">
