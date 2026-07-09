@@ -31,7 +31,7 @@ const Portfolio = () => {
       (document.documentElement.getAttribute("data-theme") as Theme) || "light"
     );
     // let the book-open animation play, then drop the transform
-    const t = setTimeout(() => setOpening(false), 2200);
+    const t = setTimeout(() => setOpening(false), 1900);
     return () => clearTimeout(t);
   }, []);
 
