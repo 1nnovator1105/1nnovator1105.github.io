@@ -223,34 +223,23 @@ a:hover {
   }
 
   /* opening: the two pages unfold from the center spine on load */
-  .book-open .book-page-left {
-    transform-origin: right center;
-    backface-visibility: hidden;
-    animation: book-open-l 1.7s cubic-bezier(0.5, 0.02, 0.3, 1) both;
-  }
+  /* the left page is the open base; the right page starts folded over onto it
+     (closed to one side) and flips open to the right like a book cover */
   .book-open .book-page-right {
     transform-origin: left center;
     backface-visibility: hidden;
-    animation: book-open-r 1.7s cubic-bezier(0.5, 0.02, 0.3, 1) both;
+    animation: cover-flip 1.6s cubic-bezier(0.65, 0, 0.35, 1) both;
   }
-  /* spine appears once the book is nearly open */
+  /* spine appears once the cover has opened */
   .book-open .book-spine {
     opacity: 0;
-    animation: spine-in 0.5s ease 1.4s both;
+    animation: spine-in 0.5s ease 1.3s both;
   }
 }
 
-@keyframes book-open-l {
+@keyframes cover-flip {
   from {
-    transform: rotateY(90deg);
-  }
-  to {
-    transform: rotateY(0deg);
-  }
-}
-@keyframes book-open-r {
-  from {
-    transform: rotateY(-90deg);
+    transform: rotateY(180deg);
   }
   to {
     transform: rotateY(0deg);
