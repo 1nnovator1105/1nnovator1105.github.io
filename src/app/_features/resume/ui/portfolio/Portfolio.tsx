@@ -171,7 +171,7 @@ const Portfolio = () => {
     <div className="book-desk min-h-screen lg:flex lg:h-screen lg:items-center lg:justify-center lg:p-6 xl:p-7">
       <div className="book relative flex w-full flex-col lg:h-full lg:max-w-[1660px] lg:flex-row lg:overflow-hidden lg:rounded-[16px]">
         {/* LEFT page — header + graph + legend */}
-        <div className="book-page-left flex flex-col bg-page lg:w-[42%] lg:h-full lg:border-r lg:border-line-strong">
+        <div className="book-page-left flex flex-col bg-page lg:w-1/2 lg:h-full lg:border-r lg:border-line-strong">
         <div className="px-6 pt-10 lg:px-10 lg:pt-16">
           <div className="flex items-start justify-between gap-4">
             <div className="anim-fade-up">
@@ -227,7 +227,7 @@ const Portfolio = () => {
         {/* RIGHT page — scrolling résumé cards */}
         <div
           ref={panelRef}
-          className="book-page-right cards-scroll w-full bg-surface lg:w-[58%] lg:h-full lg:overflow-y-auto"
+          className="book-page-right cards-scroll w-full bg-surface lg:w-1/2 lg:h-full lg:overflow-y-auto"
         >
           <div
             ref={cardsRef}
