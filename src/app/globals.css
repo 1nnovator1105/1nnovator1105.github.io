@@ -226,23 +226,23 @@ a:hover {
   .book-open .book-page-left {
     transform-origin: right center;
     backface-visibility: hidden;
-    animation: book-open-l 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: book-open-l 1.7s cubic-bezier(0.5, 0.02, 0.3, 1) both;
   }
   .book-open .book-page-right {
     transform-origin: left center;
     backface-visibility: hidden;
-    animation: book-open-r 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: book-open-r 1.7s cubic-bezier(0.5, 0.02, 0.3, 1) both;
   }
   /* spine appears once the book is nearly open */
   .book-open .book-spine {
     opacity: 0;
-    animation: spine-in 0.45s ease 0.95s both;
+    animation: spine-in 0.5s ease 1.4s both;
   }
 }
 
 @keyframes book-open-l {
   from {
-    transform: rotateY(-84deg);
+    transform: rotateY(90deg);
   }
   to {
     transform: rotateY(0deg);
@@ -250,7 +250,7 @@ a:hover {
 }
 @keyframes book-open-r {
   from {
-    transform: rotateY(84deg);
+    transform: rotateY(-90deg);
   }
   to {
     transform: rotateY(0deg);
